@@ -1,5 +1,6 @@
 {
     // now passes Challenge 1-4
+    // passes Challenge 5, but not Challenge 6
     // now try multiple elevators AND multiple floors
     init: function(elevators, floors) {
         var numElevators = elevators.length;
