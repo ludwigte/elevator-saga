@@ -1,35 +1,40 @@
 {
-    // now passes Challenge 1-4
-    // passes Challenge 5, but not Challenge 6
-    // now try multiple elevators AND multiple floors
+    // now try multiple elevators AND multiple floors, monitoring direction of elevators
     init: function(elevators, floors) {
         var numElevators = elevators.length;
         var numFloors = floors.length;
         var elNum = 0;
+        var flNum = 0;
         console.log("Floors: " + numFloors + " - Elevators:" + numElevators);
         
-        for (var elNum = 0; elNum < numElevators; elNum++)
+        for (elNum = 0; elNum < numElevators; elNum++)
         {
-            // Button pressed? Go to that floor
-            elevators[elNum].on("floor_button_pressed", function(flNum) {
-                 this.goToFloor(flNum);
+            // Button pressed inside elevator? Send elevator to that floor
+            elevators[elNum].on("floor_button_pressed", function(floor) {
+                 this.goToFloor(floor);
             });
             // Elevator idle (has no more queued destinations)? Go to ground floor
             elevators[elNum].on("idle", function() {
                 this.goToFloor(0);
             });
         }
-        for (var flNum = 0; flNum < numFloors; flNum++)
+       
+        for (flNum = 0; flNum < numFloors; flNum++)
         {
-            // Button pressed? Send elevator 0 to that floor
-            elevators[0].on("floor_button_pressed", function(flNum) {
-                this.goToFloor(flNum);
+            var floor = floors[flNum];
+            // Button pressed on a floor? If an elevator is going to pass in the correct direction, stop at that floor
+            floor.on("up_button_pressed", function() {
+                for (var el = 0; el < numElevators; el++) {
+                    if (elevators[el].destinationDirection == "up") { elevators[el].goToFloor(floor.floorNum()); }
+                }
             });
-            // Elevator idle (has no more queued destinations)? Go to ground floor
-            elevators[0].on("idle", function() {
-                this.goToFloor(0);
+            floor.on("down_button_pressed", function() {
+                for (var el = 0; el < numElevators; el++) {
+                    if (elevators[el].destinationDirection == "down") { elevators[el].goToFloor(floor.floorNum()); }
+                }
             });
         }
+
     },
     update: function(dt, elevators, floors) {
         // We normally don't need to do anything here
