@@ -1,6 +1,6 @@
 {
-    // passes Challenge 1; fails Challenge 2
-    // now try multiple elevators
+    // now passes Challenge 2
+    // now try multiple elevators AND multiple floors
     init: function(elevators, floors) {
         var numElevators = elevators.length;
         var numFloors = floors.length;
@@ -15,6 +15,17 @@
             });
             // Elevator idle (has no more queued destinations)? Go to ground floor
             elevators[elNum].on("idle", function() {
+                this.goToFloor(0);
+            });
+        }
+        for (var flNum = 0; flNum < numFloors; flNum++)
+        {
+            // Button pressed? Send elevator 0 to that floor
+            elevators[0].on("floor_button_pressed", function(flNum) {
+                this.goToFloor(flNum);
+            });
+            // Elevator idle (has no more queued destinations)? Go to ground floor
+            elevators[0].on("idle", function() {
                 this.goToFloor(0);
             });
         }
