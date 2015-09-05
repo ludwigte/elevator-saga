@@ -1,17 +1,22 @@
 {
-    // success on Challenge 2
+    // now try multiple elevators
     init: function(elevators, floors) {
-        var elevator = elevators[0]; // Let's use the first elevator
-        console.log("Number of Floors: " + floors.length)
-
-        // Whenever the elevator is idle (has no more queued destinations) ...
-        elevator.on("idle", function() {
-            // let's wait at floor 0
-            elevator.goToFloor(0);
-        });
-        elevator.on("floor_button_pressed", function(floorNum) {
-            elevator.goToFloor(floorNum);
-        });
+        var numElevators = elevators.length;
+        var numFloors = floors.length;
+        var elNum = 0;
+        console.log("Floors: " + numFloors + " - Elevators:" + numElevators);
+        
+        for (var elNum = 0; elNum < numElevators; elNum++)
+        {
+            // Button pressed? Go to that floor
+            elevators[elNum].on("floor_button_pressed", function(flNum) {
+                 this.goToFloor(flNum);
+            });
+            // Elevator idle (has no more queued destinations)? Go to ground floor
+            elevators[elNum].on("idle", function() {
+                this.goToFloor(0);
+            });
+        }
     },
     update: function(dt, elevators, floors) {
         // We normally don't need to do anything here
