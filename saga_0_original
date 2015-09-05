@@ -1,10 +1,12 @@
 {
-    // now try multiple elevators AND multiple floors, monitoring direction of elevators
+    // now try multiple elevators AND multiple floors 
+    // monitoring direction of elevators AND monitoring passing floors
     init: function(elevators, floors) {
         var numElevators = elevators.length;
         var numFloors = floors.length;
         var elNum = 0;
         var flNum = 0;
+        //var passengersAvail = []; // floor numbers where passengers have pressed up or down button
         console.log("Floors: " + numFloors + " - Elevators:" + numElevators);
         
         for (elNum = 0; elNum < numElevators; elNum++)
@@ -16,6 +18,14 @@
             // Elevator idle (has no more queued destinations)? Go to ground floor
             elevators[elNum].on("idle", function() {
                 this.goToFloor(0);
+            });
+            // Elevator about to pass a floor? If up or down button pressed, stop at floor
+            elevators[elNum].on('passing_floor', function(currentFloor, direction) {
+                if ( this.destinationQueue.indexOf(currentFloor) ) { 
+                    // Is this floor in this elevator's queue? Then stop right now.
+                    // LATER: Check whether this elevator going in the direction desired by floor passengers
+                    this.goToFloor(currentFloor, true); 
+                }
             });
         }
        
